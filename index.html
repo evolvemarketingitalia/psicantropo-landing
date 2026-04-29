@@ -13,6 +13,24 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 
+    <!-- Meta Pixel (browser-side tracking) — Dataset ID 2188196958620752 -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2188196958620752');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2188196958620752&ev=PageView&noscript=1"
+    alt=""/></noscript>
+    <!-- End Meta Pixel -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
@@ -1546,7 +1564,7 @@
         })();
 
         // ======================================================
-        // Form submission → Webhook Pabbly Connect
+        // Form submission → Webhook Pabbly Connect + Meta CAPI
         // ======================================================
         (function() {
             var WEBHOOK_URL = 'https://connect.pabbly.com/webhook-listener/webhook/IjU3NjcwNTY0MDYzNzA0MzA1MjY4Ig_3D_3D_pc/IjU3NjcwNTZlMDYzNDA0M2Q1MjY0NTUzMTUxMzYi_pc';
@@ -1556,6 +1574,34 @@
             var submitBtn = document.getElementById('form-submit');
             var btnLabel = submitBtn.querySelector('.btn-label');
             var msgEl = document.getElementById('form-message');
+
+            // ---------- Helper Meta CAPI ----------
+            // event_id univoco per deduplicazione Pixel (browser) ↔ CAPI (server, via Pabbly)
+            function generateEventID() {
+                if (window.crypto && window.crypto.randomUUID) {
+                    return window.crypto.randomUUID();
+                }
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0;
+                    var v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+            function getCookie(name) {
+                var match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\\/+^]/g, '\\$&') + '=([^;]*)'));
+                return match ? decodeURIComponent(match[1]) : '';
+            }
+            // Costruisce il cookie _fbc da fbclid se il Pixel non l'ha ancora settato
+            function deriveFbc() {
+                var fbc = getCookie('_fbc');
+                if (fbc) return fbc;
+                try {
+                    var params = new URLSearchParams(window.location.search);
+                    var fbclid = params.get('fbclid');
+                    if (fbclid) return 'fb.1.' + Date.now() + '.' + fbclid;
+                } catch (e) {}
+                return '';
+            }
 
             function showMessage(text, type) {
                 msgEl.textContent = text;
@@ -1624,9 +1670,17 @@
                 // Payload per webhook (telefono senza spazi, formato E.164-compatibile)
                 var prefissoDigits = prefisso.replace(/[^0-9]/g, '');
                 var telefonoCompleto = prefisso + telefono; // es: "+393331234567"
-                var whatsappNumber = prefissoDigits + telefono; // es: "393331234567"
+                var telefonoE164Digits = prefissoDigits + telefono; // es: "393331234567" (per CAPI hash)
+                var whatsappNumber = telefonoE164Digits;
+
+                // ---------- Meta CAPI: deduplicazione Pixel ↔ Server ----------
+                var eventID = generateEventID();
+                var fbp = getCookie('_fbp');
+                var fbc = deriveFbc();
+                var eventTime = Math.floor(Date.now() / 1000);
 
                 var payload = {
+                    // Dati form
                     nome: nome,
                     cognome: cognome,
                     nome_completo: nome + ' ' + cognome,
@@ -1634,14 +1688,40 @@
                     prefisso: prefisso,
                     telefono: telefono,
                     telefono_completo: telefonoCompleto,
+                    telefono_e164_digits: telefonoE164Digits,
                     whatsapp_url: 'https://wa.me/' + whatsappNumber,
                     impegno: impegno,
                     privacy: privacy,
                     source: 'landing-primi-lettori',
                     timestamp: new Date().toISOString(),
                     user_agent: navigator.userAgent,
-                    page_url: window.location.href
+                    page_url: window.location.href,
+                    // Campi Meta CAPI (da inoltrare a Graph API in Pabbly)
+                    meta_event_name: 'Lead',
+                    meta_event_id: eventID,
+                    meta_event_time: eventTime,
+                    meta_event_source_url: window.location.href,
+                    meta_action_source: 'website',
+                    meta_fbp: fbp,
+                    meta_fbc: fbc
                 };
+
+                // Spara l'evento Lead lato browser (Pixel) con lo stesso event_id
+                // → Meta deduplicherà con la chiamata CAPI server-side fatta da Pabbly
+                if (typeof fbq === 'function') {
+                    try {
+                        fbq('track', 'Lead', {
+                            content_name: 'Primi Lettori della Collana',
+                            content_category: 'Iscrizione',
+                            currency: 'EUR',
+                            value: 0
+                        }, {
+                            eventID: eventID
+                        });
+                    } catch (pixelErr) {
+                        console.warn('Pixel Lead non sparato:', pixelErr);
+                    }
+                }
 
                 setLoading(true);
 
