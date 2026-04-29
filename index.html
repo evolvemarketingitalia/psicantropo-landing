@@ -13,6 +13,16 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 
+    <!-- Google Analytics 4 — Property G-BBCX9KHK8H -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBCX9KHK8H"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BBCX9KHK8H');
+    </script>
+    <!-- End Google Analytics -->
+
     <!-- Meta Pixel (browser-side tracking) — Dataset ID 2188196958620752 -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -1603,6 +1613,78 @@
                 return '';
             }
 
+            // SHA-256 con Web Crypto API → richiesto da Meta per i campi user_data
+            function sha256(value) {
+                if (!value) return Promise.resolve('');
+                var normalized = String(value).toLowerCase().trim();
+                var data = new TextEncoder().encode(normalized);
+                return crypto.subtle.digest('SHA-256', data).then(function(buf) {
+                    return Array.prototype.map
+                        .call(new Uint8Array(buf), function(b) {
+                            return ('00' + b.toString(16)).slice(-2);
+                        })
+                        .join('');
+                });
+            }
+
+            // Chiamata diretta alla Conversions API di Meta dal browser.
+            // Stesso event_id del Pixel client-side → Meta deduplica automaticamente.
+            // Se il fetch fallisce non blocca il flusso utente.
+            var META_PIXEL_ID = '2188196958620752';
+            var META_CAPI_TOKEN = 'EAADo51d6iNEBRQUAGYwaPaM2xwF58F6pN7ZBGzv4SkUNz1D8yUPRZApgBEDlUjDey6l2XeZBnb6HetWK7drQQz6BSdnMx1o19wpZCYm1NXyZAtHiHymZA0e3o2YRi18xqFcY5MbeP5uiEy2XfzMz7TZA8x9LA3Nd2rZCBhBjiNF236EWbCKChpDNIe1wRaZBQVoWwiQZDZD';
+            var META_CAPI_VERSION = 'v19.0';
+
+            function callMetaCAPI(opts) {
+                // opts: { eventID, eventTime, email, phoneE164Digits, firstName, lastName, fbp, fbc }
+                return Promise.all([
+                    sha256(opts.email),
+                    sha256(opts.phoneE164Digits),
+                    sha256(opts.firstName),
+                    sha256(opts.lastName),
+                    sha256('it')
+                ]).then(function(hashes) {
+                    var userData = {
+                        em: [hashes[0]],
+                        ph: [hashes[1]],
+                        fn: [hashes[2]],
+                        ln: [hashes[3]],
+                        country: [hashes[4]],
+                        client_user_agent: navigator.userAgent
+                    };
+                    if (opts.fbp) userData.fbp = opts.fbp;
+                    if (opts.fbc) userData.fbc = opts.fbc;
+
+                    var body = {
+                        data: [{
+                            event_name: 'Lead',
+                            event_time: opts.eventTime,
+                            event_id: opts.eventID,
+                            event_source_url: window.location.href,
+                            action_source: 'website',
+                            user_data: userData,
+                            custom_data: {
+                                content_name: 'Primi Lettori della Collana',
+                                content_category: 'Iscrizione',
+                                currency: 'EUR',
+                                value: 0
+                            }
+                        }]
+                    };
+
+                    var url = 'https://graph.facebook.com/' + META_CAPI_VERSION +
+                              '/' + META_PIXEL_ID + '/events' +
+                              '?access_token=' + encodeURIComponent(META_CAPI_TOKEN);
+
+                    return fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                }).catch(function(err) {
+                    console.warn('CAPI direct call failed:', err);
+                });
+            }
+
             function showMessage(text, type) {
                 msgEl.textContent = text;
                 msgEl.className = 'form-message ' + type;
@@ -1722,6 +1804,36 @@
                         console.warn('Pixel Lead non sparato:', pixelErr);
                     }
                 }
+
+                // Spara l'evento generate_lead in Google Analytics 4
+                // (event standard GA4 per lead generation, stesso event_id per debug cross-platform)
+                if (typeof gtag === 'function') {
+                    try {
+                        gtag('event', 'generate_lead', {
+                            event_id: eventID,
+                            content_name: 'Primi Lettori della Collana',
+                            content_category: 'Iscrizione',
+                            currency: 'EUR',
+                            value: 0,
+                            source: 'landing-primi-lettori'
+                        });
+                    } catch (gaErr) {
+                        console.warn('GA4 generate_lead non sparato:', gaErr);
+                    }
+                }
+
+                // Chiamata diretta a Meta CAPI dal browser (server-side coverage)
+                // Stesso event_id del Pixel → Meta deduplica
+                callMetaCAPI({
+                    eventID: eventID,
+                    eventTime: eventTime,
+                    email: email,
+                    phoneE164Digits: telefonoE164Digits,
+                    firstName: nome,
+                    lastName: cognome,
+                    fbp: fbp,
+                    fbc: fbc
+                });
 
                 setLoading(true);
 
