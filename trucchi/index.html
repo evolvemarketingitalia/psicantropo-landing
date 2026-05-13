@@ -1510,7 +1510,7 @@
                                 <option value="+358">🇫🇮 +358</option>
                                 <option value="+353">🇮🇪 +353</option>
                             </select>
-                            <input type="tel" id="telefono" name="telefono" placeholder="3331234567" required autocomplete="tel-national" inputmode="numeric" pattern="[0-9]{6,15}" tabindex="4">
+                            <input type="tel" id="telefono" name="telefono" placeholder="333 1234567 (senza prefisso)" required autocomplete="tel-national" inputmode="numeric" pattern="[0-9]{6,15}" tabindex="4">
                         </div>
                     </div>
 
@@ -1740,13 +1740,40 @@
                 return /^[0-9]{6,15}$/.test(phone);
             }
 
-            // Rimuove spazi/caratteri non numerici dal telefono mentre l'utente digita
+            // Rimuove un prefisso duplicato che l'utente potrebbe aver digitato
+            // (es. "+39 333..." o "0039 333..." mentre il prefisso è già precompilato).
+            // Strategia conservativa: strippa solo se la lunghezza eccede ~9 cifre
+            // nazionali — così non rovina i numeri legittimi che iniziano con le
+            // stesse cifre del prefisso (es. mobile italiano 393xxxxxxx).
+            function stripDoublePrefix(value, prefissoDigits) {
+                if (!prefissoDigits || !value) return value;
+                var withZeros = '00' + prefissoDigits;
+                // Caso "00" + prefisso → sempre da strippare
+                if (value.indexOf(withZeros) === 0) {
+                    return value.substring(withZeros.length);
+                }
+                // Caso prefisso ripetuto → strippa solo se la lunghezza nazionale
+                // residua sarebbe > 9 cifre (sufficiente per IT, US, UK, FR, DE, ES...).
+                if (value.indexOf(prefissoDigits) === 0 &&
+                    value.length > prefissoDigits.length + 9) {
+                    return value.substring(prefissoDigits.length);
+                }
+                return value;
+            }
+
+            function getPrefissoDigits() {
+                var p = form.prefisso ? form.prefisso.value : '+39';
+                return (p || '+39').replace(/[^0-9]/g, '');
+            }
+
+            // Rimuove spazi/caratteri non numerici E prefisso duplicato mentre digita
             var telInput = form.telefono;
             if (telInput) {
                 telInput.addEventListener('input', function(e) {
                     var pos = e.target.selectionStart;
                     var oldVal = e.target.value;
                     var newVal = oldVal.replace(/[^0-9]/g, '');
+                    newVal = stripDoublePrefix(newVal, getPrefissoDigits());
                     if (newVal !== oldVal) {
                         e.target.value = newVal;
                         // Mantiene la posizione del cursore approssimativa
@@ -1754,13 +1781,21 @@
                         e.target.setSelectionRange(Math.max(0, pos - diff), Math.max(0, pos - diff));
                     }
                 });
-                // Rimuove spazi anche se l'utente fa paste
+                // Rimuove spazi e prefisso duplicato anche se l'utente fa paste
                 telInput.addEventListener('paste', function(e) {
                     e.preventDefault();
                     var pasted = (e.clipboardData || window.clipboardData).getData('text');
                     var clean = pasted.replace(/[^0-9]/g, '');
+                    clean = stripDoublePrefix(clean, getPrefissoDigits());
                     document.execCommand('insertText', false, clean);
                 });
+                // Re-evaluation se l'utente cambia il prefisso DOPO aver digitato
+                if (form.prefisso) {
+                    form.prefisso.addEventListener('change', function() {
+                        var current = telInput.value.replace(/[^0-9]/g, '');
+                        telInput.value = stripDoublePrefix(current, getPrefissoDigits());
+                    });
+                }
             }
 
             form.addEventListener('submit', function(e) {
@@ -1773,7 +1808,12 @@
                 var cognome = form.cognome.value.trim();
                 var email = form.email.value.trim();
                 var prefisso = form.prefisso.value;
+                var prefissoDigitsForStrip = (prefisso || '+39').replace(/[^0-9]/g, '');
                 var telefono = form.telefono.value.replace(/[^0-9]/g, '');
+                // Safety net: anche in submit togli un prefisso duplicato eventuale
+                telefono = stripDoublePrefix(telefono, prefissoDigitsForStrip);
+                // Riallinea anche il campo visibile, così l'utente vede cosa parte
+                form.telefono.value = telefono;
                 var impegno = form.impegno.checked;
                 var privacy = form.privacy.checked;
 
