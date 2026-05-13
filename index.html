@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0c">
     <title>Lo Psicantropo — Diventa uno dei primi lettori della collana</title>
-    <meta name="description" content="Leggi i libri della collana Lo Psicantropo prima di tutti. Gratis. In cambio di una recensione onesta su Amazon il giorno dell'uscita.">
+    <meta name="description" content="Leggi i libri della collana Lo Psicantropo prima di tutti. Gratis. In cambio di una recensione onesta su Amazon il giorno dell'uscita di ogni nuovo libro.">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Lo Psicantropo — Diventa primo lettore della collana">
@@ -248,6 +248,40 @@
             background: #f06747;
         }
         .cta-primary svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        .cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 28px;
+            background: transparent;
+            color: var(--accent);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 1.5px solid var(--accent);
+            border-radius: 60px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            letter-spacing: 0.2px;
+        }
+        .cta-secondary:hover {
+            background: rgba(232, 93, 58, 0.08);
+            transform: translateY(-2px);
+        }
+        .cta-secondary svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .cta-group {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            align-items: center;
+            animation: fadeUp 0.8s ease-out 0.4s both;
+        }
 
         .cta-wrap { margin-top: 40px; text-align: center; animation: fadeUp 0.8s ease-out 0.4s both; }
 
@@ -1091,6 +1125,8 @@
             .format-card { padding: 26px 18px; }
             .section h2 { font-size: 1.6rem; line-height: 1.2; }
             .cta-primary { padding: 16px 26px; font-size: 0.95rem; width: 100%; max-width: 100%; }
+            .cta-secondary { padding: 14px 22px; font-size: 0.9rem; width: 100%; max-width: 100%; }
+            .cta-group { gap: 10px; }
             .cta-spotify { padding: 14px 26px; font-size: 0.92rem; }
             .pull-quote, .fb-quote { word-wrap: break-word; }
         }
@@ -1123,30 +1159,34 @@
             <div class="covers">
                 <div class="cover-tile">
                     <div class="img-wrap"><img src="risorse/copertine/Perdona%20fronte.jpg" alt="Perdona il Padre e la Madre"></div>
-                    <div class="meta">Metà maggio 2026</div>
+                    <div class="meta">Appena pubblicato</div>
                 </div>
                 <div class="cover-tile">
                     <div class="img-wrap"><img src="risorse/copertine/La%20vita%20non%20ha%20trucchi%20fronte.jpg" alt="La Vita Non Ha Trucchi"></div>
-                    <div class="meta">Giugno 2026</div>
+                    <div class="meta">Prossima uscita</div>
                 </div>
                 <div class="cover-tile">
                     <div class="img-wrap"><img src="risorse/copertine/Fatto%20apposta%20per%20me%20fronte.jpg" alt="Fatto Apposta per Me"></div>
-                    <div class="meta">Luglio 2026</div>
+                    <div class="meta">In arrivo</div>
                 </div>
             </div>
 
-            <div class="cta-wrap">
+            <div class="cta-group">
                 <a href="#iscrizione" class="cta-primary">
-                    Voglio entrare nei primi lettori
+                    Voglio leggere GRATIS la versione digitale
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+                <a href="https://www.amazon.it/dp/B0H1GK38W2" target="_blank" rel="noopener" class="cta-secondary">
+                    Preferisco il cartaceo · Compra su Amazon
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
                 </a>
             </div>
 
             <!-- URGENCY BAR -->
-            <div class="urgency-bar" role="region" aria-label="Disponibilità e tempi">
+            <div class="urgency-bar" role="region" aria-label="Stato della collana">
                 <div class="urgency-item">
-                    <div class="urgency-number" id="countdown-days">--</div>
-                    <div class="urgency-label">giorni alla pubblicazione</div>
+                    <div class="urgency-number">1</div>
+                    <div class="urgency-label">libro pubblicato · 2 in arrivo</div>
                 </div>
                 <div class="urgency-divider" aria-hidden="true"></div>
                 <div class="urgency-item">
@@ -1163,7 +1203,7 @@
             <div class="section-label">Perché esiste questa collana</div>
             <h2>Un piccolo problema con i libri di psicologia che escono ogni mese.</h2>
             <p>Sono scritti da pseudonimi anglosassoni che probabilmente non esistono. Promettono di liberarti dal narcisista in sette strategie. Citano "studi recenti" senza specificare quali. Trattano i lettori come pazienti da guarire, non come persone da rispettare.</p>
-            <p><strong>Lo Psicantropo nasce per fare l'esatto contrario.</strong> Niente promesse di guarigione. Niente diagnosi. Niente fuffa. Solo divulgazione critica, fonti reali, voce riconoscibile — quella che conosci dal podcast e da YouTube. Ora questa voce diventa una collana di libri. Il primo esce a maggio.</p>
+            <p><strong>Lo Psicantropo nasce per fare l'esatto contrario.</strong> Niente promesse di guarigione. Niente diagnosi. Niente fuffa. Solo divulgazione critica, fonti reali, voce riconoscibile — quella che conosci dal podcast e da YouTube. Ora questa voce è diventata una collana di libri. Il primo è appena uscito.</p>
         </section>
 
         <div class="divider"></div>
@@ -1242,12 +1282,12 @@
 
         <!-- IL PRIMO LIBRO -->
         <section class="section">
-            <div class="section-label">Il primo libro che ricevi</div>
-            <h2>Maggio 2026, fra qualche settimana.</h2>
-            <p>Ecco il libro che arriverà nella tua casella di posta a pochi giorni dall'iscrizione, almeno due settimane prima della pubblicazione su Amazon.</p>
+            <div class="section-label">Il primo libro della collana</div>
+            <h2>È appena uscito su Amazon.</h2>
+            <p>Il primo libro della collana è stato pubblicato. Lo puoi comprare ora — ebook o cartaceo. Se entri nei primi lettori, riceverai in anteprima i prossimi libri della collana, due o tre settimane prima della loro uscita.</p>
 
             <div class="featured-book">
-                <div class="fb-meta">Pronto · Metà maggio 2026</div>
+                <div class="fb-meta">Disponibile su Amazon · Appena pubblicato</div>
                 <h3>Perdona il Padre e la Madre</h3>
                 <div class="fb-subtitle">Genitori tossici, Figli Incazzati e tutto quello che sta nel mezzo</div>
 
@@ -1277,13 +1317,17 @@
                     «Tua madre non è una narcisista. È la figlia di tua nonna, con le sue ferite aperte e i suoi conti non saldati.»
                 </div>
 
-                <p class="fb-closing">Lo riceverai entro pochi giorni dalla tua iscrizione, nel tuo formato preferito: PDF, Apple o Kindle.</p>
+                <p class="fb-closing">Lo trovi su Amazon Italia in ebook Kindle e in versione cartacea. Se vuoi entrare nei primi lettori della collana, riceverai i prossimi libri in anteprima.</p>
             </div>
 
-            <div class="cta-wrap">
+            <div class="cta-group">
                 <a href="#iscrizione" class="cta-primary">
-                    Voglio ricevere il primo libro
+                    Voglio leggere GRATIS la versione digitale
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+                <a href="https://www.amazon.it/dp/B0H1GK38W2" target="_blank" rel="noopener" class="cta-secondary">
+                    Preferisco il cartaceo · Compra su Amazon
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
                 </a>
             </div>
         </section>
@@ -1292,15 +1336,15 @@
 
         <!-- I TRE LIBRI -->
         <section class="section">
-            <div class="section-label">Le tre uscite — già pronte</div>
+            <div class="section-label">Le prime tre uscite</div>
             <h2>Tre libri che leggerai <em>per primo</em>.</h2>
-            <p>Due manoscritti finalizzati, uno in produzione. Sono i tre titoli su cui si apre la collana nel 2026.</p>
+            <p>Il primo è già su Amazon. Gli altri due arrivano nei prossimi mesi: i primi lettori li ricevono in anteprima, due o tre settimane prima dell'uscita pubblica.</p>
 
             <div class="book-list">
                 <article class="book-card">
                     <div class="img-wrap"><img src="risorse/copertine/Perdona%20fronte.jpg" alt="Perdona il Padre e la Madre"></div>
                     <div class="info">
-                        <div class="status">Pronto · Metà maggio 2026</div>
+                        <div class="status">Disponibile · Su Amazon</div>
                         <h3>Perdona il Padre e la Madre</h3>
                         <div class="subtitle">Genitori tossici, Figli Incazzati e tutto quello che sta nel mezzo</div>
                         <div class="desc">Smonta l'etichetta «genitore tossico» dal 1989 (Susan Forward) a oggi. Introduce il concetto originale de «La Catena dei Figli Incazzati»: tre generazioni, tre crisi diverse, stesso tavolo di Natale.</div>
@@ -1309,7 +1353,7 @@
                 <article class="book-card">
                     <div class="img-wrap"><img src="risorse/copertine/La%20vita%20non%20ha%20trucchi%20fronte.jpg" alt="La Vita Non Ha Trucchi"></div>
                     <div class="info">
-                        <div class="status">Pronto · Giugno 2026</div>
+                        <div class="status">Pronto · Prossima uscita</div>
                         <h3>La Vita Non Ha Trucchi</h3>
                         <div class="subtitle">Perché il tuo cervello preferisce la magia alla realtà</div>
                         <div class="desc">Pensiero magico, manifesting, legge dell'attrazione. Da Frazer (1890) all'algoritmo di TikTok. The Secret di Rhonda Byrne ha venduto trenta milioni di copie. Ecco perché il tuo cervello compra la magia che gli viene venduta.</div>
@@ -1318,7 +1362,7 @@
                 <article class="book-card">
                     <div class="img-wrap"><img src="risorse/copertine/Fatto%20apposta%20per%20me%20fronte.jpg" alt="Fatto Apposta per Me"></div>
                     <div class="info">
-                        <div class="status">In produzione · Luglio 2026</div>
+                        <div class="status">In produzione · In arrivo</div>
                         <h3>Fatto Apposta per Me</h3>
                         <div class="subtitle">E altre cazzate che ti impediscono di uscire dalle relazioni infelici</div>
                         <div class="desc">Otto narrative romantiche che ci tengono dentro relazioni infelici. Dall'anima gemella (Platone, smontato con Lewandowski 2007) al trauma bonding (Carnes). Apre la mini-collana sulle relazioni.</div>
@@ -1352,7 +1396,7 @@
         <section class="section">
             <div class="section-label">La collana — 23 titoli pianificati</div>
             <h2>Una collana, non un libro singolo.</h2>
-            <p>Da maggio in avanti uscirà un libro ogni due o tre mesi. Argomenti che hai sentito sul podcast e altri completamente nuovi:</p>
+            <p>Uscirà un libro ogni due o tre mesi. Argomenti che hai sentito sul podcast e altri completamente nuovi:</p>
             <p style="font-family: 'Playfair Display', serif; font-style: italic; color: var(--text-primary); font-size: 1.05rem; line-height: 1.9;">
                 Genitori e figli adulti incazzati · Pensiero magico e manifesting · Relazioni infelici e narrative pericolose · Iper-performance dei figli · Cinismo e sopravvivenza al mondo che fa schifo · Sessualità mediata, OnlyFans e avatar IA · Tradimento, perdono, e altre cazzate che ci raccontiamo · Adolescenti e social · Autodiagnosi virali · Quiet quitting e burnout
             </p>
@@ -1360,7 +1404,7 @@
 
             <div class="cta-wrap">
                 <a href="#iscrizione" class="cta-primary">
-                    Voglio entrare nei primi lettori
+                    Voglio leggere GRATIS la versione digitale
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </a>
             </div>
@@ -1425,7 +1469,7 @@
             <div class="section-label">Diventa primo lettore</div>
             <div class="form-card">
                 <h2>Voglio entrare nei <em>primi lettori</em>.</h2>
-                <p class="form-lede">Lascia il tuo nome e la tua email. Ti scrivo io, ti mando il primo libro entro pochi giorni.</p>
+                <p class="form-lede">Lascia il tuo nome e la tua email. Ti scrivo io e ti includo nei primi lettori della collana — il prossimo libro lo ricevi in anteprima.</p>
 
                 <form class="form" id="form-iscrizione" novalidate>
                     <div class="form-row">
@@ -1485,7 +1529,7 @@
                     </label>
 
                     <button type="submit" id="form-submit" class="cta-primary" style="margin-top: 8px;" tabindex="7">
-                        <span class="btn-label">Voglio entrare nei primi lettori</span>
+                        <span class="btn-label">Voglio leggere GRATIS la versione digitale</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </button>
 
@@ -1526,7 +1570,7 @@
                 </details>
                 <details class="faq-item">
                     <summary>Cosa succede dopo che mi iscrivo?</summary>
-                    <div class="answer">Ricevi un'email di conferma e, entro pochi giorni, una mia comunicazione personale con il primo libro in anteprima. Da lì in poi una mail ogni 2-3 mesi quando esce un nuovo libro.</div>
+                    <div class="answer">Ricevi un'email di conferma e una mia comunicazione personale di benvenuto. Da lì in poi una mail ogni 2-3 mesi: il manoscritto del prossimo libro in anteprima, due o tre settimane prima dell'uscita su Amazon.</div>
                 </details>
             </div>
         </section>
@@ -1566,27 +1610,8 @@
 
     <script>
         // ======================================================
-        // Countdown all'uscita del primo libro (15 maggio 2026)
+        // Countdown rimosso (libro 1 pubblicato — landing evergreen)
         // ======================================================
-        (function() {
-            var releaseDate = new Date('2026-05-15T00:00:00');
-            var el = document.getElementById('countdown-days');
-            if (!el) return;
-            function update() {
-                var now = new Date();
-                var diff = releaseDate - now;
-                var days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-                if (days > 0) {
-                    el.textContent = days;
-                } else {
-                    el.textContent = '✓';
-                    var label = el.nextElementSibling;
-                    if (label) label.textContent = 'già disponibile';
-                }
-            }
-            update();
-            setInterval(update, 3600000);
-        })();
 
         // ======================================================
         // Form submission → Webhook Pabbly Connect + Meta CAPI
@@ -1707,7 +1732,7 @@
 
             function setLoading(loading) {
                 submitBtn.disabled = loading;
-                btnLabel.textContent = loading ? 'Invio in corso…' : 'Voglio entrare nei primi lettori';
+                btnLabel.textContent = loading ? 'Invio in corso…' : 'Voglio leggere GRATIS la versione digitale';
             }
 
             function validateEmail(email) {
@@ -1863,7 +1888,7 @@
                 .then(function() {
                     // Con mode no-cors la response è opaque (non leggibile),
                     // ma se non c'è errore di rete consideriamo la submission ok.
-                    showMessage('Iscrizione ricevuta. Ti scrivo personalmente entro pochi giorni con il primo libro in anteprima.', 'success');
+                    showMessage('Iscrizione ricevuta. Ti scrivo personalmente nei prossimi giorni — il prossimo libro della collana lo riceverai in anteprima.', 'success');
                     form.reset();
                     setLoading(false);
                     btnLabel.textContent = 'Iscrizione ricevuta ✓';
